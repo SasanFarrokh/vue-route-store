@@ -1,0 +1,36 @@
+{
+  "name": "vue-route-store",
+  "version": "0.0.3",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsup src/index.ts --watch --format esm",
+    "build": "tsup src/index.ts --external debug --dts --format esm",
+    "lint": "eslint --fix .",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
+    "eslint": "^7.12.1",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-vue": "^7.8.0",
+    "jest": "^26.6.3",
+    "standard-version": "^9.1.1",
+    "ts-jest": "^26.5.4",
+    "tsup": "^4.8.21",
+    "typescript": "^4.2.3",
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.0"
+  }
+}
