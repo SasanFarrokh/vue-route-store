@@ -14,39 +14,40 @@ export function createRouteStore ({
         push: (route: RouteLocationRaw, data: Record<string, unknown>, options: RouteStoreOptions) => Promise<unknown>
     }
 
-    const _push = router.push
+    ['push', 'replace'].forEach(method => {
+        const _method = router[method as 'push']
+        _router.push = async (route, data, options = {}) => {
+            const mergedOptions: RouteStoreOptions = {
+                ...defaultOptions,
+                ...options
+            }
 
-    _router.push = async (route, data, options = {}) => {
-        const mergedOptions: RouteStoreOptions = {
-            ...defaultOptions,
-            ...options
+            if (!data || typeof data !== 'object') {
+                return _method.call(_router, route)
+            }
+            const routeNormalized = _router.resolve(route)
+
+            const keyFn = mergedOptions.key
+            mergedOptions.makeRoute && !options.key && mergedOptions.makeRoute(routeNormalized)
+
+
+            const currentRouteKey = keyFn(routeNormalized)
+            stores[currentRouteKey] = reactive(data)
+
+            const unwatchStorage = watch(stores[currentRouteKey], (t) => {
+                mergedOptions.storage.setItem('route-store_' + currentRouteKey, JSON.stringify(data))
+            }, {
+                immediate: true
+            })
+
+            await _method.call(_router, routeNormalized)
+            const unwatch = watch(() => keyFn(_router.currentRoute.value), (t, f) => {
+                delete stores[f]
+                unwatch()
+                unwatchStorage()
+            })
         }
-
-        if (!data || typeof data !== 'object') {
-            return _push.call(_router, route)
-        }
-        const routeNormalized = _router.resolve(route)
-
-        const keyFn = mergedOptions.key
-        mergedOptions.makeRoute && !options.key && mergedOptions.makeRoute(routeNormalized)
-
-
-        const currentRouteKey = keyFn(routeNormalized)
-        stores[currentRouteKey] = reactive(data)
-
-        const unwatchStorage = watch(stores[currentRouteKey], (t) => {
-            mergedOptions.storage.setItem('route-store_' + currentRouteKey, JSON.stringify(data))
-        }, {
-            immediate: true
-        })
-
-        await _push.call(_router, routeNormalized)
-        const unwatch = watch(() => keyFn(_router.currentRoute.value), (t, f) => {
-            delete stores[f]
-            unwatch()
-            unwatchStorage()
-        })
-    }
+    })
 }
 
 type RouteStoreInitOptions = Pick<RouteStoreOptions, 'storage' | 'onError'>
