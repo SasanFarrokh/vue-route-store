@@ -1,4 +1,4 @@
-import type { RouteLocation } from 'vue-router'
+import type { RouteLocation, Router } from 'vue-router'
 
 export interface RouteStoreOptions {
     key?: (route: RouteLocation) => string;
@@ -8,7 +8,8 @@ export interface RouteStoreOptions {
         setItem(key: string, value: string): Promise<void> | void;
     } | null;
     onError?: (err: Error) => StoreData | void,
-    readonly?: boolean
+    readonly?: boolean,
+    router?: Router
 }
 
 export type StoreData = Record<string, unknown>
