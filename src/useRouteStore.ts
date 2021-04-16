@@ -17,7 +17,7 @@ function resolveStore(_store: string | StoreData, key: string) {
     return store
 }
 
-export function useRouteStore(keyFn?: string | ((route: RouteLocation) => string), options: RouteStoreInitOptions = {}) {
+export function useRouteStore<T extends StoreData>(keyFn?: string | ((route: RouteLocation) => string), options: RouteStoreInitOptions = {}): T {
     const mergedOptions: RouteStoreOptions = {
         ...defaultOptions,
         ...options
@@ -50,14 +50,14 @@ export function useRouteStore(keyFn?: string | ((route: RouteLocation) => string
 
                     })
 
-                return _readonly(store)
+                return _readonly(store) as T
             }
             store = resolveStore(storeData, key)
         }
-        return _readonly(reactive(store))
+        return _readonly(reactive(store)) as T
     } catch (err) {
-        return mergedOptions.onError(err) || {
+        return (mergedOptions.onError(err) || {
             ERROR: true
-        };
+        }) as T;
     }
 }
