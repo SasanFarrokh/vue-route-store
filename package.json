@@ -1,12 +1,12 @@
 {
   "name": "vue-route-store",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "license": "MIT",
   "scripts": {
     "dev": "tsup src/index.ts --watch --format esm",
-    "build": "tsup src/index.ts --external debug --dts --format esm",
+    "build": "tsup src/index.ts --external debug --dts --format esm,cjs",
     "lint": "eslint --fix .",
     "test": "jest",
     "test:watch": "jest --watch",
